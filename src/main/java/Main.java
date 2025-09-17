@@ -11,6 +11,14 @@ public class Main {
       serverSocket = new ServerSocket(port);
       serverSocket.setReuseAddress(true);
       clientSocket = serverSocket.accept();
+      byte[] requestBuffer = new byte[12];
+      clientSocket.getInputStream().read(requestBuffer);
+      byte[] correlationId = new byte[8];
+      System.arraycopy(requestBuffer, 8, correlationId, 0, 4);
+      byte[] responseBytes = new byte[8];
+      System.arraycopy(correlationId, 0, responseBytes, 4, 4);
+      clientSocket.getOutputStream().write(responseBytes);
+
     } catch (IOException e) {
       System.out.println("IOException: " + e.getMessage());
     } finally {
